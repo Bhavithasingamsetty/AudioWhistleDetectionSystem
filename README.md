@@ -27,18 +27,26 @@ The web interface updates the whistle count dynamically and issues an alert once
 git clone https://github.com/Bhavithasingamsetty/AudioWhistleDetectionSystem.git
 
 cd AudioWhistleDetectionSystem
+
 2. Create a virtual environment
+
 python3 -m venv env
+
 source env/bin/activate   # For Mac/Linux
+
 env\Scripts\activate      # For Windows
+
 3. Install dependencies
+
 pip install -r requirements.txt
+
 4. Train the model (optional)
-If you want to retrain the model:
-python model_training.py
-5. Run the Flask application
-python app.py
+If you want to retrain the model: python model_training.py
+
+5. Run the Flask application    python app.py
+
 Then open your browser and go to:
+
 http://127.0.0.1:5000
 
 # Example Output
