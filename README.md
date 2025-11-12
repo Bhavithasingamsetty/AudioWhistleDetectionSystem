@@ -50,13 +50,21 @@ Then open your browser and go to:
 http://127.0.0.1:5500
 
 # Example Output
+
 Whistle detected! Total: 1
+
 Whistle detected! Total: 2
+
 Target reached — stopping detection.
+
 Final count: 2/2
-Frontend display:
+
+# Frontend display:
+
 Whistles Detected: 2 / Target: 2
+
 Target of 2 whistles reached!
+
 # Future Improvements
 Improve model accuracy using deep learning (CNN for spectrogram classification)
 Add noise filtering and auto-calibration for different environments
