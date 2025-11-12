@@ -22,25 +22,10 @@ Trains a Random Forest Classifier to differentiate between whistle and non-whist
 Saves the trained model as whistle_model.pkl.
 The Flask backend uses this model for real-time classification of audio captured from the microphone.
 The web interface updates the whistle count dynamically and issues an alert once the target is reached.
-# Project Structure
-AudioWhistleDetectionSystem/
-│
-├── data/
-│   ├── Whistle/
-│   ├── Noise/
-│
-├── model_training.py         # Extracts features and trains Random Forest model
-├── whistle_model.pkl         # Saved trained model
-├── app.py                    # Flask app for real-time detection
-├── templates/
-│   └── index.html            # Frontend UI
-├── static/
-│   ├── css/
-│   └── js/
-└── README.md
 # Setup Instructions
 1. Clone the repository
 git clone https://github.com/Bhavithasingamsetty/AudioWhistleDetectionSystem.git
+
 cd AudioWhistleDetectionSystem
 2. Create a virtual environment
 python3 -m venv env
@@ -56,7 +41,7 @@ python app.py
 Then open your browser and go to:
 http://127.0.0.1:5000
 
-Example Output
+# Example Output
 Whistle detected! Total: 1
 Whistle detected! Total: 2
 Target reached — stopping detection.
