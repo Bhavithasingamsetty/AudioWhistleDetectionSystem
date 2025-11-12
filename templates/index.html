@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🍳 Smart Gas Stove Whistle Counter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #f8f9fa, #e0f7fa);
+      text-align: center;
+      padding-top: 60px;
+      color: #333;
+    }
+    h1 { color: #008b8b; }
+    h2 { font-size: 1.8rem; color: #444; margin-top: 20px; }
+    input, button {
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #aaa;
+      margin-top: 15px;
+    }
+    button {
+      background-color: #008b8b;
+      color: white;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+    button:hover { background-color: #007070; }
+    p { color: #555; margin-top: 40px; }
+  </style>
+
+  <script>
+  let alerted = false;
+
+  let lastCount = 0;
+  let lastTarget = 0;
+
+async function updateCount() {
+  try {
+    const res = await fetch("/status");
+    const data = await res.json();
+    let count = data.count ?? lastCount;
+    let target = data.target ?? lastTarget;
+
+    // keep the most recent non-zero values
+    if (count !== 0) lastCount = count;
+    if (target !== 0) lastTarget = target;
+
+    const counter = document.getElementById("counter");
+    const message = document.getElementById("message");
+
+    if (target > 0) {
+      counter.innerText = `Whistles Detected: ${count} / ${target}`;
+    } else if (lastTarget > 0) {
+      counter.innerText = `Whistles Detected: ${lastCount} / ${lastTarget}`;
+    } else {
+      counter.innerText = `Whistles Detected: ${count}`;
+    }
+
+    if (target > 0 && count >= target && !alerted) {
+      alerted = true;
+      playVoiceAlert();
+      showNotification();
+      message.textContent = `Target of ${target} whistles reached!`;
+    }
+  } catch (err) {
+    console.error("Error fetching status:", err);
+  }
+}
+
+  async function setTarget() {
+    const val = document.getElementById("targetInput").value;
+    if (!val || val <= 0) {
+      alert("Please enter a valid target number.");
+      return;
+    }
+
+    await fetch("/set_target", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ target: val }),
+    });
+
+    document.getElementById("counter").innerText = `Whistles Detected: 0 / ${val}`;
+    document.getElementById("message").textContent = "";
+    alerted = false;
+  }
+
+  function playVoiceAlert() {
+    const msg = new SpeechSynthesisUtterance("Cooking done. Please turn off the stove.");
+    msg.rate = 0.9;
+    msg.lang = "en-US";
+    speechSynthesis.speak(msg);
+  }
+
+  function showNotification() {
+    if (Notification.permission === "granted") {
+      new Notification("Cooking Done!", {
+        body: "Your whistle target has been reached.",
+      });
+    }
+  }
+
+  async function requestPermission() {
+    if (Notification.permission !== "granted") {
+      await Notification.requestPermission();
+    }
+  }
+
+  // Unlock audio after first click
+  document.addEventListener("click", () => {
+    const unlockMsg = new SpeechSynthesisUtterance("Voice alerts enabled");
+    speechSynthesis.speak(unlockMsg);
+  }, { once: true });
+
+  window.onload = () => {
+    requestPermission();
+    setInterval(updateCount, 2000);
+  };
+</script>
+
+
+<body>
+  <h1>🍳 Smart Gas Stove Whistle Counter</h1>
+  <h2 id="counter">Whistles Detected: 0</h2>
+
+  <div>
+    <input type="number" id="targetInput" placeholder="Enter Target Whistles">
+    <button onclick="setTarget()">Set Target</button>
+  </div>
+
+  <p>Detection will begin only after setting a target.<br>
+  You’ll get a voice and notification alert when your target is reached.</p>
+</body>
+</html>
